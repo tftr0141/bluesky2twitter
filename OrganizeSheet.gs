@@ -54,11 +54,13 @@ async function getMySheet(_ranges = SHEET_NAME) {
   try {
     // Run both functions at the same time, if the timeout finishes first, stop our API call.
     let timedOut = false;
-    response = await Promise.race([
-      Sheets.Spreadsheets.Values.batchGet(
-        SHEET_ID,
-        { ranges: _ranges } // 取得したい範囲  e.g. ['シート1!A:B', 'シート2!C1']
-      ),
+    await Promise.race([
+      new Promise((resolve, reject) => {
+        response = Sheets.Spreadsheets.Values.batchGet(
+          SHEET_ID,
+          { ranges: _ranges } // 取得したい範囲  e.g. ['シート1!A:B', 'シート2!C1']
+        );
+      }),
       createTimeoutPromise(10000).catch((err) => {
         timedOut = true;
       }),
@@ -77,7 +79,7 @@ async function getMySheet(_ranges = SHEET_NAME) {
       "Getting sheet failed. error: \n" +
         e.message +
         "\n responce: \n" +
-        response.getContentText()
+        JSON.stringify(response)
     );
   }
 }
