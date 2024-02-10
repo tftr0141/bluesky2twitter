@@ -1,6 +1,6 @@
 function test() {
-  var accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
-  var response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
+  const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
+  const response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
 
   const postInfo = response.feed[0].post;  
 
@@ -50,8 +50,8 @@ function fetchUrl(_url, _options, func = UrlFetchApp.fetch) {
 
 function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
   const tweetAttemptNum = n;
-  var response = {};
-  for(var i = 0; i < tweetAttemptNum; i++) {
+  let response = {};
+  for(let i = 0; i < tweetAttemptNum; i++) {
     try {
       response = func(url, options);
       // Utilities.sleep(100);

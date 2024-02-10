@@ -44,10 +44,10 @@ function authCallback(request) {
 function pkceChallengeVerifier() {
   const userProps = PropertiesService.getUserProperties();
   if (!userProps.getProperty("code_verifier")) {
-    var verifier = "";
+    let verifier = "";
     const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~";
 
-    for (var i = 0; i < 128; i++) {
+    for (let i = 0; i < 128; i++) {
       verifier += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
@@ -74,7 +74,7 @@ function doAuthorization1() {
   if (service.hasAccess()) {
     Logger.log("Already authorized");
   } else {
-    var authorizationUrl = service.authorize();
+    const authorizationUrl = service.authorize();
     Logger.log('Open the following URL and re-run the script: %s',
         authorizationUrl);
   }

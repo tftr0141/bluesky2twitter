@@ -1,7 +1,7 @@
 ////////////////////    twitter authentication    ///////////////////////
 
 function SendPostsToTwitter() {
-  var isTweeted = false;
+  let isTweeted = false;
 
   const sheetData = getMySheet();
 
@@ -19,7 +19,7 @@ function SendPostsToTwitter() {
   const isTwitterPostedColumnIndex = headers.indexOf('already tweeted');
   const imageUrlColumnIndex = headers.indexOf('image url');
   
-  var tweetIds = [];
+  const tweetIds = [];
 
   const postIdValues = sheetData.map(elm => elm[0]);
 
@@ -35,7 +35,7 @@ function SendPostsToTwitter() {
     const isRepost = toBoolean(post[isRepostColumnIndex]);
     const isReply = toBoolean(post[isReplyIdColumnIndex]);
     const isIncludeEmbed = toBoolean(post[isIncludeEmbedColumnIndex]);
-    var isIgnore = toBoolean(post[isIgnoreColumnIndex]);
+    let isIgnore = toBoolean(post[isIgnoreColumnIndex]);
     const isTwitterPosted = toBoolean(post[isTwitterPostedColumnIndex]);
     const imageUrl = post[imageUrlColumnIndex];
     const parentId = post[parentIdColumnIndex];
@@ -68,7 +68,7 @@ function SendPostsToTwitter() {
     isTweeted = true;
   });
 
-  for (var i = 0; i < twitterPostedIds.length; i++) {
+  for (let i = 0; i < twitterPostedIds.length; i++) {
     const postId = twitterPostedIds[i];
     const index = postIdValues.indexOf(postId);
     updateMySheet([[true]], `${alphabets[isTwitterPostedColumnIndex]}${index + 1}`);   // 投稿した行のisTwitterPostedをtrueにする
@@ -94,7 +94,7 @@ function sendTweetWithImage(text, imageUrls, replyId = '') {
   for (imageUrl of imageUrls) mediaIds.push(uploadImage(imageUrl));
 
   if (mediaIds) {
-    var payload = {
+    let payload = {
       text: text,
       media: {media_ids: mediaIds}, 
     };
@@ -108,7 +108,7 @@ function sendTweetWithImage(text, imageUrls, replyId = '') {
 }
 
 function postTweet(_payload) {
-  var service = getService();
+  const service = getService();
   if (service.hasAccess()) {
     const url = `https://api.twitter.com/2/tweets`;
     const options = {
@@ -158,12 +158,12 @@ function uploadImage(imageUrl) {
 
 function uploadMovie(movieUrl) {
   const movieData = fetchUrlNTimes(movieUrl, { method: "GET" }, 3);
-  var mediaId = '';
-  for (var i = 0; i < 3; i++){
+  let mediaId = '';
+  for (let i = 0; i < 3; i++){
     mediaId = mediaUploadInit(movieData);
     mediaUploadAppend(movieData, mediaId);
     
-    var status = mediaUploadStatus(mediaId);
+    let status = mediaUploadStatus(mediaId);
     while (status.processing_info.state === 'in_progress') {
       Utilities.sleep(1000 * status.processing_info.check_after_secs);
       status = mediaUploadStatus(mediaId);
@@ -193,10 +193,10 @@ function mediaUploadAppend(file, mediaId) {
   const fileData = file.getBlob().getBytes();
   // 分割ファイルを作成
   const splitSize = 4e6;
-  var startByte = 0;
-  var dataParts = [];
+  let startByte = 0;
+  const dataParts = [];
   while (startByte < fileSize) {
-    var endByte = Math.min(startByte + splitSize, fileSize);
+    let endByte = Math.min(startByte + splitSize, fileSize);
     const dataPart = fileData.slice(startByte, endByte); // ファイルデータを分割
     dataParts.push(dataPart);
 
@@ -204,7 +204,7 @@ function mediaUploadAppend(file, mediaId) {
     startByte = endByte;
   }
 
-  for (var i = 0; i < dataParts.length; i++) {
+  for (let i = 0; i < dataParts.length; i++) {
     const payload = {
       command: 'APPEND',
       media_id: mediaId,
@@ -233,11 +233,11 @@ function mediaUploadFinalize(mediaId) {
     command: 'FINALIZE',
     media_id: mediaId
   };
-  var response = uploadTwitterMedia(payload);
-  do {
+  let response = uploadTwitterMedia(payload);
+  while (response.hasOwnProperty('processing_info')) {
     Utilities.sleep(1000 * response.processing_info.check_after_secs);
     response = uploadTwitterMedia(payload);
-  } while (response.hasOwnProperty('processing_info')) 
+  }  
   return response;
 }
 

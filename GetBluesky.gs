@@ -1,11 +1,11 @@
 //////////////  add bluesky post to sheet  /////////////////
 
 function ListUpBlueskyPosts() {
-  var newTweetExsists = false;
+  let newTweetExsists = false;
 
   const sheetData = getMySheet();
   const columnNumber = sheetData[0].length;
-  var postData = JSON.parse(JSON.stringify(sheetData));
+  const postData = JSON.parse(JSON.stringify(sheetData));
   postData.splice(0,1)
   const postIdValues = postData.map(elm => elm[0]);
 
@@ -79,7 +79,7 @@ function ListUpBlueskyPosts() {
     const isTwitterPostedColumnIndex = headers.indexOf('already tweeted');
     const imageUrlColumnIndex = headers.indexOf('image url');
 
-    var newRow = new Array(columnNumber);
+    let newRow = new Array(columnNumber);
     newRow[postIdColumnIndex] = postId;
     newRow[parentAuthorHandleColumnIndex] = replyParentAuthor;
     newRow[tweetIdColumnIndex] = ''; 

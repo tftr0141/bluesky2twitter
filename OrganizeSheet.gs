@@ -6,7 +6,7 @@ function addDataRow(data) {
   const firstEmptyRowIndex = findFirstEmptyCellInColumn(sheetData);
 
   const emptyRow = [];
-  for (var i = 0; i < lastColumn; i++) {
+  for (let i = 0; i < lastColumn; i++) {
     emptyRow.push("")
   }
   
@@ -89,7 +89,7 @@ function updateMySheet(_values, _range) {
 
 function sheetTest() {
   //Logger.log('my sheet: %s \n data: %s', getMySheet(), sheetData[5]);
-  var newRow = ['bafyreichkne745mkabo74avg3it3jf3voc4wtfzn3tln6knwmpx2c2qezq', 'test text', 'FALSE', 'FALSE', 'FALSE', 'TRUE'];
+  let newRow = ['bafyreichkne745mkabo74avg3it3jf3voc4wtfzn3tln6knwmpx2c2qezq', 'test text', 'FALSE', 'FALSE', 'FALSE', 'TRUE'];
   addDataRow(newRow);
 }
 
