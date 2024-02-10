@@ -94,6 +94,7 @@ function ListUpBlueskyPosts() {
 
     Logger.log('row added to sheet: \n %s', newRow);
     addDataRow(newRow);
+    updateCache();
   });
 
   return newTweetExsists;

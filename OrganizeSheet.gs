@@ -48,40 +48,30 @@ function findFirstEmptyCellInColumn(_sheetData) {
   return colLength;
 }
 
-async function getMySheet(_ranges = SHEET_NAME) {
-  // all range for default
-  let response = {};
+function getMySheet(ranges = '', useCache = true) {
+  ranges = ranges ? ranges : SHEET_NAME;
+  const sheetId = SHEET_ID;
+
+  const cache = makeCache();
+  const sheetKey = "mySheet";
+  const mySheet = cache.get(sheetKey);
+  if (mySheet != null && useCache) return mySheet;
+
+  let apiResponse = {};
   try {
-    // Run both functions at the same time, if the timeout finishes first, stop our API call.
-    let timedOut = false;
-    await Promise.race([
-      new Promise((resolve, reject) => {
-        response = Sheets.Spreadsheets.Values.batchGet(
-          SHEET_ID,
-          { ranges: _ranges } // 取得したい範囲  e.g. ['シート1!A:B', 'シート2!C1']
-        );
-      }),
-      createTimeoutPromise(10000).catch((err) => {
-        timedOut = true;
-      }),
-    ]);
-
-    if (timedOut) {
-      // This will stop your function if it has taken too long
-      throw new Error("Google sheet api call timed out");
-    }
-
-    const sheetData = response.valueRanges[0].values || [[]]; // 値の取り出し
-    return paddingArray(sheetData, "");
-  } catch (e) {
-    // range error or timeout
-    throw new Error(
-      "Getting sheet failed. error: \n" +
-        e.message +
-        "\n responce: \n" +
-        JSON.stringify(response)
+    apiResponse = Sheets.Spreadsheets.Values.batchGet(
+      sheetId, 
+      { ranges: ranges },
     );
+    const sheetData = apiResponse.valueRanges[0]?.values || [[]];
+    const result = paddingArray(sheetData, '');
+    cache.put(sheetKey, result);
+    return result;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Failed to fetch sheet data. Error: \n' + error.message + '\n Response: \n' + apiResponse.getContentText());
   }
+
 }
 
 function updateMySheet(_values, _range) {

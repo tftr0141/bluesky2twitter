@@ -24,7 +24,9 @@ function test() {
 }
 
 function test2() {
-  url = "";
+  const cache = makeCache();
+  const result = cache.get('mySheet');
+  Logger.log(result[41]);
 }
 
 function toBoolean(booleanStr) {
@@ -78,10 +80,24 @@ function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
   }
 }
 
-function createTimeoutPromise(timeoutMilliseconds) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      reject(new Error("Operation timed out"));
-    }, timeoutMilliseconds);
-  });
+function makeCache() {
+  const cache = CacheService.getScriptCache();
+  return {
+    get: function(key) {
+      return JSON.parse(cache.get(key));
+    },
+    put: function(key, value, sec) {
+      //リファレンスよりcache.putの3つ目の引数は省略可。
+      //デフォルトでは10分間（600秒）保存される。最大値は6時間（21600秒）
+      cache.put(key, JSON.stringify(value), (sec === undefined) ? 21500 : sec);
+      return value;
+    }
+  };
 }
+
+function updateCache(key = 'mySheet', value) {
+  value = value === undefined ? getMySheet('', false) : value;
+  const cache = makeCache()
+  cache.put(key, value);
+}
+

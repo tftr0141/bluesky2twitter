@@ -74,6 +74,8 @@ function SendPostsToTwitter() {
     updateMySheet([[true]], `${alphabets[isTwitterPostedColumnIndex]}${index + 1}`);   // 投稿した行のisTwitterPostedをtrueにする
     updateMySheet([[tweetIds[i]]], `${alphabets[tweetIdColumnIndex]}${index + 1}`);
   }
+  updateCache();
+  
   if (!isTweeted) Logger.log('SendPostsToTwitter was ran but nothing tweeted.');
 }
 
