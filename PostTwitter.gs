@@ -40,7 +40,7 @@ function SendPostsToTwitter() {
     const imageUrl = post[imageUrlColumnIndex];
     const parentId = post[parentIdColumnIndex];
 
-    var replyParentTweetId = '';
+    let replyParentTweetId = '';
     if (isReply) {
       const parentPostIndex = postIdValues.indexOf(parentId);
 
@@ -56,8 +56,8 @@ function SendPostsToTwitter() {
 
     // Logger.log('text: %s  \n  image: %s', text, isIncludeEmbed ? imageUrl : "no_image");
 
-    var tweetId = '';
-    var tweetResult = {};
+    let tweetId = '';
+    let tweetResult = {};
     [tweetResult, tweetId] = isIncludeEmbed ? sendTweetWithImage(text, imageUrl.split(','), replyParentTweetId) 
     : sendTweet(text, replyParentTweetId);
     Logger.log('Result of tweet: \n %s', JSON.stringify(tweetResult, null, 2));
@@ -78,11 +78,11 @@ function SendPostsToTwitter() {
 }
 
 function sendTweet(_text, replyId = '') {
-  var payload = {
+  const payload = {
     text: _text,
   };
   if (replyId !== '') {
-    payload.reply = {
+    payload['reply'] = {
       in_reply_to_tweet_id: replyId
     };
   }
@@ -90,7 +90,7 @@ function sendTweet(_text, replyId = '') {
 }
 
 function sendTweetWithImage(text, imageUrls, replyId = '') {
-  var mediaIds = []
+  const mediaIds = []
   for (imageUrl of imageUrls) mediaIds.push(uploadImage(imageUrl));
 
   if (mediaIds) {

@@ -17,13 +17,27 @@ function ListUpBlueskyPosts() {
     const postId = postInfo.cid;
     const text = postInfo.record.text;
 
-    const isRepost = postInfo.author.handle !== BLUESKY_IDENTIFIER;
+    let isQuoteRepost = false;
     const isReply = postInfo.record.reply !== undefined;
-    const replyParentAuthor = isReply ? feed.reply.parent.author.handle : "";
-    const replyParentId = isReply ? feed.reply.parent.cid : "";
+    let replyParentAuthor = '';
+    let replyParentId = '';
+    if (isReply) {
+      replyParentAuthor = feed.reply.parent.author.handle;
+      replyParentId = feed.reply.parent.cid;
+    }
+    let isIncludeEmbed = false;
+    if (postInfo.hasOwnProperty('embed')){
+      const embedInfo = postInfo.embed;
+      isIncludeEmbed = embedInfo.hasOwnProperty('images');
+      if (embedInfo.$type === 'app.bsky.embed.record#view') {
+        isQuoteRepost = (embedInfo.record.value.$type === 'app.bsky.feed.post');
+      } else if (embedInfo.$type === 'app.bsky.embed.recordWithMedia#view') { // if post includes both image and repost
+        isQuoteRepost = true;
+        isIncludeEmbed = true;
+      }
+    }
+    const isRepost = (postInfo.author.handle !== BLUESKY_IDENTIFIER) || isQuoteRepost;
 
-    const isIncludeEmbed = postInfo.hasOwnProperty('embed') && postInfo.embed.hasOwnProperty('images');
-    var imageUrls = [];
 
     if (postIdValues.includes(postId)) {  // if post id is already written in the sheet
       return;
@@ -31,6 +45,7 @@ function ListUpBlueskyPosts() {
 
     newTweetExsists = true;
 
+    const imageUrls = [];
     if (isIncludeEmbed) {
       const aturi = postInfo.uri;
       const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;

@@ -18,7 +18,9 @@ function test() {
   const responseForPhotoJSON = JSON.parse(responseForPhoto.getContentText());
   */
   // responseForPhotoJSON.thread.post.author.handle
-  Logger.log(postInfo.hasOwnProperty('embed') && postInfo.embed.hasOwnProperty('images'));
+  const objective = postInfo.embed.record.record;
+  Logger.log(Object.keys(objective));
+  Logger.log(objective);
 }
 
 function test2() {
