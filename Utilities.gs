@@ -2,7 +2,7 @@ function test() {
   const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
   const response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
 
-  const postInfo = response.feed[0].post;  
+  const postInfo = response.feed[0].post;
 
   /*
   const aturi = postInfo.uri;
@@ -24,24 +24,24 @@ function test() {
 }
 
 function test2() {
-  url = '';
+  url = "";
 }
 
 function toBoolean(booleanStr) {
-    // "true"文字列と比較した結果を返す
-    // 念のため小文字化しておく
-    return booleanStr.toLowerCase() === "true";
+  // "true"文字列と比較した結果を返す
+  // 念のため小文字化しておく
+  return booleanStr.toLowerCase() === "true";
 }
 
-function paddingArray(array, pad = '') {
-  array.forEach(elm => {
+function paddingArray(array, pad = "") {
+  array.forEach((elm) => {
     while (elm.length < array[0].length) elm.push(pad);
   });
-  return array
+  return array;
 }
 
 const alphabets = Array.apply(null, new Array(26)).map((v, i) => {
-  return String.fromCharCode('A'.charCodeAt(0) + i);
+  return String.fromCharCode("A".charCodeAt(0) + i);
 });
 
 function fetchUrl(_url, _options, func = UrlFetchApp.fetch) {
@@ -51,15 +51,25 @@ function fetchUrl(_url, _options, func = UrlFetchApp.fetch) {
 function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
   const tweetAttemptNum = n;
   let response = {};
-  for(let i = 0; i < tweetAttemptNum; i++) {
+  for (let i = 0; i < tweetAttemptNum; i++) {
     try {
       response = func(url, options);
       // Utilities.sleep(100);
       return response;
-    } catch(e) {
+    } catch (e) {
       if (i == tweetAttemptNum - 1) {
-        throw new Error('Failed accessing to ' + url + ' with option \n' + options 
-          + ' \n' + i + ' times. \n response: ' + response.getContentText() + '\n error: ' + e.message);
+        throw new Error(
+          "Failed accessing to " +
+            url +
+            " with option \n" +
+            options +
+            " \n" +
+            i +
+            " times. \n response: " +
+            response.getContentText() +
+            "\n error: " +
+            e.message
+        );
       }
       console.error(e.message);
       Utilities.sleep(1000);
@@ -68,3 +78,10 @@ function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
   }
 }
 
+function createTimeoutPromise(timeoutMilliseconds) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      reject(new Error("Operation timed out"));
+    }, timeoutMilliseconds);
+  });
+}
