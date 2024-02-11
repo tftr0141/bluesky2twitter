@@ -111,28 +111,26 @@ function sendTweetWithImage(text, imageUrls, replyId = '') {
 
 function postTweet(_payload) {
   const service = getService();
-  if (service.hasAccess()) {
-    const url = `https://api.twitter.com/2/tweets`;
-    const options = {
-      method: 'POST',
-      'contentType': 'application/json',
-      headers: {
-        Authorization: 'Bearer ' + service.getAccessToken()
-      },
-      muteHttpExceptions: true,
-      payload: JSON.stringify(_payload)
-    };
-
-    const tweetAttemptNum = 3;
-    const response = fetchUrlNTimes(url, options, tweetAttemptNum);
-
-    const result = JSON.parse(response.getContentText());
-    return [result, JSON.parse(response).data.id];
-
-  } else {
+  if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
-    Logger.log('Open the following URL and re-run the script: %s',authorizationUrl);
+    throw new Error('Open the following URL and re-run the script: %s',authorizationUrl);
   }
+  const url = `https://api.twitter.com/2/tweets`;
+  const options = {
+    method: 'POST',
+    'contentType': 'application/json',
+    headers: {
+      Authorization: 'Bearer ' + service.getAccessToken()
+    },
+    muteHttpExceptions: true,
+    payload: JSON.stringify(_payload)
+  };
+
+  const tweetAttemptNum = 3;
+  const response = fetchUrlNTimes(url, options, tweetAttemptNum);
+
+  const result = JSON.parse(response.getContentText());
+  return [result, JSON.parse(response).data.id];
 }
 
 // upload image via twitter api v1.1
@@ -141,7 +139,7 @@ function uploadImage(imageUrl) {
 
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
-    Logger.log("Open the following URL and re-run the script: %s", authorizationUrl);
+    throw new Error("Open the following URL and re-run the script: %s", authorizationUrl);
   }
 
   const imageBlob = fetchUrl(imageUrl, { method: "GET" }).getBlob();
