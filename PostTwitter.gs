@@ -58,8 +58,12 @@ function SendPostsToTwitter() {
 
     let tweetId = '';
     let tweetResult = {};
-    [tweetResult, tweetId] = isIncludeEmbed ? sendTweetWithImage(text, imageUrl.split(','), replyParentTweetId) 
-    : sendTweet(text, replyParentTweetId);
+    try{
+      [tweetResult, tweetId] = isIncludeEmbed ? sendTweetWithImage(text, imageUrl.split(','), replyParentTweetId) 
+        : sendTweet(text, replyParentTweetId);
+    } catch(e) {
+      console.error("tweet failed. error: \n" + e.message + "\n result: \n" + tweetResult);
+    }
     Logger.log('Result of tweet: \n %s', JSON.stringify(tweetResult, null, 2));
 
     tweetIds.push(tweetId);

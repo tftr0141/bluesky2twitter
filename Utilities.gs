@@ -107,8 +107,8 @@ function makeCache() {
   }
 }
 
-function updateCache(key = 'mySheet', value) {
-  value = value === undefined ? getMySheet('', false) : value;
+function updateCache(key = 'mySheet', value = null) {
+  value = value == null ? getMySheet('', false) : value;
   const cache = makeCache()
   cache.put(key, value);
 }
