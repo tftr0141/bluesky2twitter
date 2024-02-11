@@ -114,7 +114,9 @@ function getPosts(accessJwt, identifier) {
 
   const response = fetchUrl(url, options);
   const responseJSON = JSON.parse(response.getContentText());
-
+  if (!responseJSON.hasOwnProperty('feed')) {
+    throw new Error('Something wrong with fetched posts. responseJSON: \n' + responseJSON);
+  }
   return responseJSON;
 }
 
