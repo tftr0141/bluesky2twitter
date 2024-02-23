@@ -15,7 +15,7 @@ function ListUpBlueskyPosts() {
   responseJSON.feed.forEach((feed) => {
     const postInfo = feed.post;
     const postId = postInfo.cid;
-    const text = postInfo.record.text;
+    let text = postInfo.record.text;
 
     let isQuoteRepost = false;
     const isReply = postInfo.record.reply !== undefined;
@@ -29,7 +29,9 @@ function ListUpBlueskyPosts() {
     if (postInfo.hasOwnProperty("embed")) {
       const embedInfo = postInfo.embed;
       isIncludeEmbed = embedInfo.hasOwnProperty("images");
-      if (embedInfo.$type === "app.bsky.embed.record#view") {
+      if (embedInfo.$type === "app.bsky.embed.external#view") {
+        text += "\n" + embedInfo.external.uri; // TODO: put external link to card on tweet 
+      } else if (embedInfo.$type === "app.bsky.embed.record#view") {
         isQuoteRepost = embedInfo.record.value.$type === "app.bsky.feed.post";
       } else if (embedInfo.$type === "app.bsky.embed.recordWithMedia#view") {
         // if post includes both image and repost
@@ -38,7 +40,7 @@ function ListUpBlueskyPosts() {
       }
     }
     const isRepost =
-      postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
+      (postInfo.author.handle !== BLUESKY_IDENTIFIER) || isQuoteRepost;
 
     if (postIdValues.includes(postId)) {
       // if post id is already written in the sheet

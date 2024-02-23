@@ -18,7 +18,7 @@ function test() {
   const responseForPhotoJSON = JSON.parse(responseForPhoto.getContentText());
   */
   // responseForPhotoJSON.thread.post.author.handle
-  const objective = postInfo.embed.record.record;
+  const objective = postInfo.embed.external.uri; //.embed.external
   Logger.log(Object.keys(objective));
   Logger.log(objective);
 }

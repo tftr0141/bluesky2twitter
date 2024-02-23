@@ -92,7 +92,7 @@ function SendPostsToTwitter() {
   if (!isTweeted) Logger.log("SendPostsToTwitter was ran but nothing tweeted.");
 }
 
-function sendTweet(_text, replyId = "") {
+function sendTweet(_text, replyId) {
   const payload = {
     text: _text,
   };
@@ -104,7 +104,7 @@ function sendTweet(_text, replyId = "") {
   return postTweet(payload);
 }
 
-function sendTweetWithImage(text, imageUrls, replyId = "") {
+function sendTweetWithImage(text, imageUrls, replyId) {
   const mediaIds = [];
   for (imageUrl of imageUrls) mediaIds.push(uploadImage(imageUrl));
 
