@@ -48,7 +48,7 @@ function findFirstEmptyCellInColumn(_sheetData) {
   return colLength;
 }
 
-function getMySheet(ranges = '', useCache = true) {
+function getMySheet(ranges = "", useCache = true) {
   ranges = ranges ? ranges : SHEET_NAME;
   const sheetId = SHEET_ID;
 
@@ -59,19 +59,22 @@ function getMySheet(ranges = '', useCache = true) {
 
   let apiResponse = {};
   try {
-    apiResponse = Sheets.Spreadsheets.Values.batchGet(
-      sheetId, 
-      { ranges: ranges },
-    );
+    apiResponse = Sheets.Spreadsheets.Values.batchGet(sheetId, {
+      ranges: ranges,
+    });
     const sheetData = apiResponse.valueRanges[0]?.values || [[]];
-    const result = paddingArray(sheetData, '');
+    const result = paddingArray(sheetData, "");
     cache.put(sheetKey, result);
     return result;
   } catch (error) {
     console.error(error);
-    throw new Error('Failed to fetch sheet data. Error: \n' + error.message + '\n Response: \n' + apiResponse.getContentText());
+    throw new Error(
+      "Failed to fetch sheet data. Error: \n" +
+        error.message +
+        "\n Response: \n" +
+        apiResponse.getContentText()
+    );
   }
-
 }
 
 function updateMySheet(_values, _range) {

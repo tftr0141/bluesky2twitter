@@ -6,8 +6,8 @@ function ListUpBlueskyPosts() {
   const sheetData = getMySheet();
   const columnNumber = sheetData[0].length;
   const postData = JSON.parse(JSON.stringify(sheetData));
-  postData.splice(0,1)
-  const postIdValues = postData.map(elm => elm[0]);
+  postData.splice(0, 1);
+  const postIdValues = postData.map((elm) => elm[0]);
 
   const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
   const responseJSON = getPosts(accessJwt, BLUESKY_IDENTIFIER);
@@ -19,27 +19,29 @@ function ListUpBlueskyPosts() {
 
     let isQuoteRepost = false;
     const isReply = postInfo.record.reply !== undefined;
-    let replyParentAuthor = '';
-    let replyParentId = '';
+    let replyParentAuthor = "";
+    let replyParentId = "";
     if (isReply) {
       replyParentAuthor = feed.reply.parent.author.handle;
       replyParentId = feed.reply.parent.cid;
     }
     let isIncludeEmbed = false;
-    if (postInfo.hasOwnProperty('embed')){
+    if (postInfo.hasOwnProperty("embed")) {
       const embedInfo = postInfo.embed;
-      isIncludeEmbed = embedInfo.hasOwnProperty('images');
-      if (embedInfo.$type === 'app.bsky.embed.record#view') {
-        isQuoteRepost = (embedInfo.record.value.$type === 'app.bsky.feed.post');
-      } else if (embedInfo.$type === 'app.bsky.embed.recordWithMedia#view') { // if post includes both image and repost
+      isIncludeEmbed = embedInfo.hasOwnProperty("images");
+      if (embedInfo.$type === "app.bsky.embed.record#view") {
+        isQuoteRepost = embedInfo.record.value.$type === "app.bsky.feed.post";
+      } else if (embedInfo.$type === "app.bsky.embed.recordWithMedia#view") {
+        // if post includes both image and repost
         isQuoteRepost = true;
         isIncludeEmbed = true;
       }
     }
-    const isRepost = (postInfo.author.handle !== BLUESKY_IDENTIFIER) || isQuoteRepost;
+    const isRepost =
+      postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
 
-
-    if (postIdValues.includes(postId)) {  // if post id is already written in the sheet
+    if (postIdValues.includes(postId)) {
+      // if post id is already written in the sheet
       return;
     }
 
@@ -50,15 +52,17 @@ function ListUpBlueskyPosts() {
       const aturi = postInfo.uri;
       const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
       const options = {
-        "method": "get",
-        "contentType": "application/json",
-        "headers": {
-          "Authorization": `Bearer ${accessJwt}`
+        method: "get",
+        contentType: "application/json",
+        headers: {
+          Authorization: `Bearer ${accessJwt}`,
         },
-        muteHttpExceptions: true
+        muteHttpExceptions: true,
       };
       const responseForPhoto = fetchUrl(posturi, options);
-      const responseForPhotoJSON = JSON.parse(responseForPhoto.getContentText());
+      const responseForPhotoJSON = JSON.parse(
+        responseForPhoto.getContentText()
+      );
       for (image of responseForPhotoJSON.thread.post.embed.images) {
         imageUrls.push(image.fullsize);
       }
@@ -66,23 +70,25 @@ function ListUpBlueskyPosts() {
     }
 
     const headers = sheetData[0];
-    const postIdColumnIndex = headers.indexOf('BlueSky ID');
-    const parentAuthorHandleColumnIndex = headers.indexOf('parent author handle');
-    const tweetIdColumnIndex = headers.indexOf('tweet id');
-    const parentIdColumnIndex = headers.indexOf('reply parent id');
+    const postIdColumnIndex = headers.indexOf("BlueSky ID");
+    const parentAuthorHandleColumnIndex = headers.indexOf(
+      "parent author handle"
+    );
+    const tweetIdColumnIndex = headers.indexOf("tweet id");
+    const parentIdColumnIndex = headers.indexOf("reply parent id");
 
-    const textColumnIndex = headers.indexOf('text');
-    const isReplyIdColumnIndex = headers.indexOf('is reply');
-    const isRepostColumnIndex = headers.indexOf('isRepost');
-    const isIncludeEmbedColumnIndex = headers.indexOf('include embed');
-    const isIgnoreColumnIndex = headers.indexOf('ignore this');
-    const isTwitterPostedColumnIndex = headers.indexOf('already tweeted');
-    const imageUrlColumnIndex = headers.indexOf('image url');
+    const textColumnIndex = headers.indexOf("text");
+    const isReplyIdColumnIndex = headers.indexOf("is reply");
+    const isRepostColumnIndex = headers.indexOf("isRepost");
+    const isIncludeEmbedColumnIndex = headers.indexOf("include embed");
+    const isIgnoreColumnIndex = headers.indexOf("ignore this");
+    const isTwitterPostedColumnIndex = headers.indexOf("already tweeted");
+    const imageUrlColumnIndex = headers.indexOf("image url");
 
     let newRow = new Array(columnNumber);
     newRow[postIdColumnIndex] = postId;
     newRow[parentAuthorHandleColumnIndex] = replyParentAuthor;
-    newRow[tweetIdColumnIndex] = ''; 
+    newRow[tweetIdColumnIndex] = "";
     newRow[parentIdColumnIndex] = replyParentId;
     newRow[textColumnIndex] = text;
     newRow[isRepostColumnIndex] = isRepost;
@@ -90,9 +96,9 @@ function ListUpBlueskyPosts() {
     newRow[isIncludeEmbedColumnIndex] = isIncludeEmbed;
     newRow[isIgnoreColumnIndex] = false;
     newRow[isTwitterPostedColumnIndex] = false;
-    newRow[imageUrlColumnIndex] = imageUrls.join(',');
+    newRow[imageUrlColumnIndex] = imageUrls.join(",");
 
-    Logger.log('row added to sheet: \n %s', newRow);
+    Logger.log("row added to sheet: \n %s", newRow);
     addDataRow(newRow);
     updateCache();
   });
@@ -101,21 +107,28 @@ function ListUpBlueskyPosts() {
 }
 
 function getPosts(accessJwt, identifier) {
-  const url = "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor=" + identifier + "&limit=" + MAX_DATA_NUM;
+  const url =
+    "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor=" +
+    identifier +
+    "&limit=" +
+    MAX_DATA_NUM;
 
   const options = {
-    "method": "get",
-    "contentType": "application/json",
-    "headers": {
-      "Authorization": `Bearer ${accessJwt}`
+    method: "get",
+    contentType: "application/json",
+    headers: {
+      Authorization: `Bearer ${accessJwt}`,
     },
-    muteHttpExceptions: true
+    muteHttpExceptions: true,
   };
 
   const response = fetchUrl(url, options);
   const responseJSON = JSON.parse(response.getContentText());
-  if (!responseJSON.hasOwnProperty('feed')) {
-    throw new Error('Something wrong with fetched posts. responseJSON: \n' + responseJSON);
+  if (!responseJSON.hasOwnProperty("feed")) {
+    throw new Error(
+      "Something wrong with fetched posts. responseJSON: \n" +
+        response.getContentText()
+    );
   }
   return responseJSON;
 }
@@ -124,8 +137,8 @@ function getAccessJwt(identifier, password) {
   const url = "https://bsky.social/xrpc/com.atproto.server.createSession";
 
   let data = {
-    "identifier": identifier,
-    "password": password
+    identifier: identifier,
+    password: password,
   };
 
   const options = {
@@ -134,7 +147,7 @@ function getAccessJwt(identifier, password) {
       "Content-Type": "application/json; charset=UTF-8",
     },
     payload: JSON.stringify(data),
-    muteHttpExceptions: true
+    muteHttpExceptions: true,
   };
 
   let response = fetchUrl(url, options);

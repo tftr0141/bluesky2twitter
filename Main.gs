@@ -1,8 +1,7 @@
 function main() {
-  if (ListUpBlueskyPosts()){
+  if (ListUpBlueskyPosts()) {
     SendPostsToTwitter();
   } else {
-    Logger.log("No new post")
+    Logger.log("No new post");
   }
 }
-

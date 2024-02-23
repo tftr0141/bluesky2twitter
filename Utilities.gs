@@ -26,7 +26,7 @@ function test() {
 function test2() {
   const cache = makeCache();
   const userProperties = PropertiesService.getUserProperties();
-  const result = userProperties.getProperty('test1');
+  const result = userProperties.getProperty("test1");
   Logger.log(result);
 }
 
@@ -98,18 +98,17 @@ function makeCache() {
   */
   const userProperties = PropertiesService.getUserProperties();
   return {
-    get: function(key) {
+    get: function (key) {
       return JSON.parse(userProperties.getProperty(key));
     },
-    put: function(key, value) {
+    put: function (key, value) {
       userProperties.setProperty(key, JSON.stringify(value)); // stored permanently
-    }
-  }
+    },
+  };
 }
 
-function updateCache(key = 'mySheet', value = null) {
-  value = value == null ? getMySheet('', false) : value;
-  const cache = makeCache()
+function updateCache(key = "mySheet", value = null) {
+  value = value == null ? getMySheet("", false) : value;
+  const cache = makeCache();
   cache.put(key, value);
 }
-
