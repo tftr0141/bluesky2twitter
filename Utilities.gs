@@ -2,7 +2,7 @@ function test() {
   const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
   const response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
 
-  const postInfo = response.feed[0].post;
+  const postInfo = response.feed[1].post;
 
   /*
   const aturi = postInfo.uri;
@@ -18,17 +18,31 @@ function test() {
   const responseForPhotoJSON = JSON.parse(responseForPhoto.getContentText());
   */
   // responseForPhotoJSON.thread.post.author.handle
-  const objective = postInfo.embed.external.uri; //.embed.external
+  const objective = postInfo.record;
+  /*
+  const links = postInfo["record"]["facets"].flatMap(facet =>
+    facet.features
+      .filter(feature => feature.$type === "app.bsky.richtext.facet#link")
+      .map(linkFeature => linkFeature.uri)  
+  );
+  */
+
   Logger.log(Object.keys(objective));
   Logger.log(objective);
 }
 
 function test2() {
-  const cache = makeCache();
-  const userProperties = PropertiesService.getUserProperties();
-  const result = userProperties.getProperty("test1");
-  Logger.log(result);
+  let text = "https://example.com/hogeh... bar http://www.com/xyz... www.exampli.co... www.hello.com";
+  const regex = /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g;
+  const regex2 = /\b\.{3}/g;
+  const modText = text.match(regex);
+  
+  // Log the length of the modified text
+  
+  // Log the modified text itself
+  Logger.log(modText);
 }
+
 
 function toBoolean(booleanStr) {
   // "true"文字列と比較した結果を返す

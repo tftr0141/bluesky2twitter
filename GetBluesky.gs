@@ -15,7 +15,18 @@ function ListUpBlueskyPosts() {
   responseJSON.feed.forEach((feed) => {
     const postInfo = feed.post;
     const postId = postInfo.cid;
+    
     let text = postInfo.record.text;
+    text = text.replace(/\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g, ""); // remove truncated links like "https://example.com/hogeh..."
+    let urls = "";
+    if (postInfo.record.hasOwnProperty("facets")) {
+      urls = postInfo["record"]["facets"].flatMap(facet =>
+        facet.features
+          .filter(feature => feature.$type === "app.bsky.richtext.facet#link")
+          .map(linkFeature => linkFeature.uri)  
+      );
+      text += "\n" + urls.join("\n");
+    }
 
     let isQuoteRepost = false;
     const isReply = postInfo.record.reply !== undefined;
@@ -30,7 +41,6 @@ function ListUpBlueskyPosts() {
       const embedInfo = postInfo.embed;
       isIncludeEmbed = embedInfo.hasOwnProperty("images");
       if (embedInfo.$type === "app.bsky.embed.external#view") {
-        text += "\n" + embedInfo.external.uri; // TODO: put external link to card on tweet 
       } else if (embedInfo.$type === "app.bsky.embed.record#view") {
         isQuoteRepost = embedInfo.record.value.$type === "app.bsky.feed.post";
       } else if (embedInfo.$type === "app.bsky.embed.recordWithMedia#view") {
