@@ -38,7 +38,6 @@ function test2() {
   Logger.log(Array.from(urls));
 }
 
-
 function toBoolean(booleanStr) {
   // "true"文字列と比較した結果を返す
   // 念のため小文字化しておく

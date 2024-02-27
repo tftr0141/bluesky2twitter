@@ -21,18 +21,20 @@ function ListUpBlueskyPosts() {
       return;
     }
     newTweetExsists = true;
-    
+
     let text = postInfo.record.text;
-    text = text.replace(/\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g, ""); // remove truncated links like "https://example.com/hogeh..."
-    let urls = new Set("");
+    text = text.replace(
+      /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g,
+      ""
+    ); // remove truncated links like "https://example.com/hogeh..."
+    const urls = new Set();
     if (postInfo.record.hasOwnProperty("facets")) {
-      urls = new Set(
-        postInfo["record"]["facets"].flatMap(facet =>
+      const urls_in_text = postInfo["record"]["facets"].flatMap((facet) =>
         facet.features
-          .filter(feature => feature.$type === "app.bsky.richtext.facet#link")
-          .map(linkFeature => linkFeature.uri)  
-        )
+          .filter((feature) => feature.$type === "app.bsky.richtext.facet#link")
+          .map((linkFeature) => linkFeature.uri)
       );
+      urls_in_text.forEach((url) => urls.add(url));
     }
 
     let isQuoteRepost = false;
@@ -58,10 +60,9 @@ function ListUpBlueskyPosts() {
       }
     }
     const isRepost =
-      (postInfo.author.handle !== BLUESKY_IDENTIFIER) || isQuoteRepost;
+      postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
 
     if (urls) text += "\n" + Array.from(urls).join("\n");
-    
 
     const imageUrls = [];
     if (isIncludeEmbed) {
