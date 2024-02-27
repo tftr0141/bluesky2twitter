@@ -15,17 +15,24 @@ function ListUpBlueskyPosts() {
   responseJSON.feed.forEach((feed) => {
     const postInfo = feed.post;
     const postId = postInfo.cid;
+
+    if (postIdValues.includes(postId)) {
+      // if post id is already written in the sheet
+      return;
+    }
+    newTweetExsists = true;
     
     let text = postInfo.record.text;
     text = text.replace(/\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g, ""); // remove truncated links like "https://example.com/hogeh..."
-    let urls = "";
+    let urls = new Set("");
     if (postInfo.record.hasOwnProperty("facets")) {
-      urls = postInfo["record"]["facets"].flatMap(facet =>
+      urls = new Set(
+        postInfo["record"]["facets"].flatMap(facet =>
         facet.features
           .filter(feature => feature.$type === "app.bsky.richtext.facet#link")
           .map(linkFeature => linkFeature.uri)  
+        )
       );
-      text += "\n" + urls.join("\n");
     }
 
     let isQuoteRepost = false;
@@ -41,6 +48,7 @@ function ListUpBlueskyPosts() {
       const embedInfo = postInfo.embed;
       isIncludeEmbed = embedInfo.hasOwnProperty("images");
       if (embedInfo.$type === "app.bsky.embed.external#view") {
+        urls.add(embedInfo.external.uri);
       } else if (embedInfo.$type === "app.bsky.embed.record#view") {
         isQuoteRepost = embedInfo.record.value.$type === "app.bsky.feed.post";
       } else if (embedInfo.$type === "app.bsky.embed.recordWithMedia#view") {
@@ -52,12 +60,8 @@ function ListUpBlueskyPosts() {
     const isRepost =
       (postInfo.author.handle !== BLUESKY_IDENTIFIER) || isQuoteRepost;
 
-    if (postIdValues.includes(postId)) {
-      // if post id is already written in the sheet
-      return;
-    }
-
-    newTweetExsists = true;
+    if (urls) text += "\n" + Array.from(urls).join("\n");
+    
 
     const imageUrls = [];
     if (isIncludeEmbed) {

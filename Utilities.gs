@@ -32,15 +32,10 @@ function test() {
 }
 
 function test2() {
-  let text = "https://example.com/hogeh... bar http://www.com/xyz... www.exampli.co... www.hello.com";
-  const regex = /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g;
-  const regex2 = /\b\.{3}/g;
-  const modText = text.match(regex);
-  
-  // Log the length of the modified text
-  
-  // Log the modified text itself
-  Logger.log(modText);
+  const urls = new Set(["a"]);
+  urls.add("b");
+  // urls.add("www.hello.com");
+  Logger.log(Array.from(urls));
 }
 
 
