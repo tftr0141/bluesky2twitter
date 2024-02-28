@@ -16,10 +16,9 @@ function test() {
 }
 
 function test2() {
-  const urls = new Set(["a"]);
-  urls.add("b");
-  // urls.add("www.hello.com");
-  Logger.log(Array.from(urls));
+  const cache = makeCache();
+  const result = cache.get("mySheet")
+  Logger.log(result);
 }
 
 function toBoolean(booleanStr) {
@@ -74,7 +73,7 @@ function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
 }
 
 function makeCache() {
-  /*
+  // use cacheservice
   const cache = CacheService.getScriptCache();
   return {
     get: function(key) {
@@ -87,7 +86,9 @@ function makeCache() {
       return value;
     }
   };
-  */
+
+  /*
+  // use userProperty
   const userProperties = PropertiesService.getUserProperties();
   return {
     get: function (key) {
@@ -97,6 +98,7 @@ function makeCache() {
       userProperties.setProperty(key, JSON.stringify(value)); // stored permanently
     },
   };
+  */
 }
 
 function updateCache(key = "mySheet", value = null) {
