@@ -74,7 +74,7 @@ function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
 
 function makeCache() {
   // use cacheservice
-  const cache = CacheService.getScriptCache();
+  const cache = CacheService.getUserCache();
   return {
     get: function(key) {
       return JSON.parse(cache.get(key));

@@ -123,12 +123,12 @@ function ListUpBlueskyPosts() {
   return newTweetExsists;
 }
 
-function getPosts(accessJwt, identifier) {
+function getPosts(accessJwt, identifier, number = MAX_DATA_NUM) {
   const url =
     "https://bsky.social/xrpc/app.bsky.feed.getAuthorFeed?actor=" +
     identifier +
     "&limit=" +
-    MAX_DATA_NUM;
+    number;
 
   const options = {
     method: "get",
