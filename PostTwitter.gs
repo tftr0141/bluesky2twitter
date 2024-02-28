@@ -35,7 +35,7 @@ function SendPostsToTwitter() {
     const isRepost = toBoolean(post[isRepostColumnIndex]);
     const isReply = toBoolean(post[isReplyIdColumnIndex]);
     const isIncludeEmbed = toBoolean(post[isIncludeEmbedColumnIndex]);
-    let isIgnore = toBoolean(post[isIgnoreColumnIndex]);
+    let isIgnore = toBoolean(post[isIgnoreColumnIndex]) || postId === "";
     const isTwitterPosted = toBoolean(post[isTwitterPostedColumnIndex]);
     const imageUrl = post[imageUrlColumnIndex];
     const parentId = post[parentIdColumnIndex];
@@ -64,7 +64,7 @@ function SendPostsToTwitter() {
         : sendTweet(text, replyParentTweetId);
     } catch (e) {
       console.error(
-        "tweet failed. error: \n" + e.message + "\n result: \n" + tweetResult
+        "tweet failed. error: \n" + e.message + "\n result: \n" + JSON.stringify(tweetResult)
       );
     }
     Logger.log("Result of tweet: \n %s", JSON.stringify(tweetResult, null, 2));

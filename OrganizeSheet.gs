@@ -21,8 +21,8 @@ function addDataRow(data) {
     sheetData[firstEmptyRowIndex + 1] = emptyRow;
   }
 
-  const maxDataNum = MAX_DATA_NUM;
-  if (firstEmptyRowIndex > maxDataNum - 2) {
+  const maxDataNum = parseInt(MAX_DATA_NUM) * 2;
+  if (firstEmptyRowIndex > maxDataNum - 1) {
     sheetData[1] = emptyRow;
   }
 

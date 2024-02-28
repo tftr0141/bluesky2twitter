@@ -1,34 +1,18 @@
 function test() {
   const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
   const response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
+  Logger.log(response.feed.length);
 
-  const postInfo = response.feed[1].post;
+  let sheetData = getMySheet();
+  sheetData.splice(0,1);
+  const sheetIds = sheetData.map(elm=>elm[0]);
 
-  /*
-  const aturi = postInfo.uri;
-  const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
-  const options = {
-    "method": "get",
-    "contentType": "application/json",
-    "headers": {
-      "Authorization": `Bearer ${accessJwt}`
-    },
-  };
-  const responseForPhoto = fetchUrl(posturi, options);
-  const responseForPhotoJSON = JSON.parse(responseForPhoto.getContentText());
-  */
+  const postInfo = response.feed[98].post;
+
   // responseForPhotoJSON.thread.post.author.handle
-  const objective = postInfo.record;
-  /*
-  const links = postInfo["record"]["facets"].flatMap(facet =>
-    facet.features
-      .filter(feature => feature.$type === "app.bsky.richtext.facet#link")
-      .map(linkFeature => linkFeature.uri)  
-  );
-  */
+  const postIds = response.feed.map(elm => elm.post.record.text); // postInfo.embed.images[0].fullsize;
 
-  Logger.log(Object.keys(objective));
-  Logger.log(objective);
+  Logger.log(postIds);
 }
 
 function test2() {
