@@ -4,20 +4,20 @@ function test() {
   Logger.log(response.feed.length);
 
   let sheetData = getMySheet();
-  sheetData.splice(0,1);
-  const sheetIds = sheetData.map(elm=>elm[0]);
+  sheetData.splice(0, 1);
+  const sheetIds = sheetData.map((elm) => elm[0]);
 
   const postInfo = response.feed[98].post;
 
   // responseForPhotoJSON.thread.post.author.handle
-  const postIds = response.feed.map(elm => elm.post.record.text); // postInfo.embed.images[0].fullsize;
+  const postIds = response.feed.map((elm) => elm.post.record.text); // postInfo.embed.images[0].fullsize;
 
   Logger.log(postIds);
 }
 
 function test2() {
   const cache = makeCache();
-  const result = cache.get("mySheet")
+  const result = cache.get("mySheet");
   Logger.log(result);
 }
 
@@ -76,15 +76,15 @@ function makeCache() {
   // use cacheservice
   const cache = CacheService.getUserCache();
   return {
-    get: function(key) {
+    get: function (key) {
       return JSON.parse(cache.get(key));
     },
-    put: function(key, value, sec) {
+    put: function (key, value, sec) {
       //リファレンスよりcache.putの3つ目の引数は省略可。
       //デフォルトでは10分間（600秒）保存される。最大値は6時間（21600秒）
-      cache.put(key, JSON.stringify(value), (sec === undefined) ? 21500 : sec);
+      cache.put(key, JSON.stringify(value), sec === undefined ? 21500 : sec);
       return value;
-    }
+    },
   };
 
   /*

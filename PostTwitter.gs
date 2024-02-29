@@ -64,7 +64,10 @@ function SendPostsToTwitter() {
         : sendTweet(text, replyParentTweetId);
     } catch (e) {
       console.error(
-        "tweet failed. error: \n" + e.message + "\n result: \n" + JSON.stringify(tweetResult)
+        "tweet failed. error: \n" +
+          e.message +
+          "\n result: \n" +
+          JSON.stringify(tweetResult)
       );
     }
     Logger.log("Result of tweet: \n %s", JSON.stringify(tweetResult, null, 2));
