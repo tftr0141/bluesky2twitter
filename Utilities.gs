@@ -4,22 +4,7 @@ function test() {
   Logger.log(response.feed.length);
 
   const postInfo = response.feed[2].post;
-  const aturi = postInfo.uri;
-  const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
-  const options = {
-    method: "get",
-    contentType: "application/json",
-    headers: {
-      Authorization: `Bearer ${accessJwt}`,
-    },
-    muteHttpExceptions: true,
-  };
-  const responseForPhoto = fetchUrl(posturi, options);
-  const responseForPhotoJSON = JSON.parse(
-    responseForPhoto.getContentText()
-  );
-  let result = responseForPhotoJSON.thread.post.embed.$type;
-  result = postInfo.embed.media.images[0].fullsize;
+  const result = postInfo.embed.media.images[0].fullsize;
   const postIds = response.feed.map((elm) => elm.post.record.text); // postInfo.embed.images[0].fullsize;
 
   Logger.log(Object.keys(result));

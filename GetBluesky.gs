@@ -51,7 +51,9 @@ function ListUpBlueskyPosts() {
       const embedInfo = postInfo.embed;
       if (embedInfo.$type === "app.bsky.embed.images#view") {
         isIncludeEmbed = true;
-        postInfo.embed.images.map((imageInfo) => imageUrls.push(imageInfo.fullsize));
+        postInfo.embed.images.map((imageInfo) =>
+          imageUrls.push(imageInfo.fullsize)
+        );
       } else if (embedInfo.$type === "app.bsky.embed.external#view") {
         urls.add(embedInfo.external.uri);
       } else if (embedInfo.$type === "app.bsky.embed.record#view") {
@@ -60,8 +62,10 @@ function ListUpBlueskyPosts() {
         // if post includes both image and repost
         isQuoteRepost = true;
         isIncludeEmbed = true;
-        postInfo.embed.media.images.map((imageInfo) => imageUrls.push(imageInfo.fullsize));
-     }
+        postInfo.embed.media.images.map((imageInfo) =>
+          imageUrls.push(imageInfo.fullsize)
+        );
+      }
     }
     const isRepost =
       postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
