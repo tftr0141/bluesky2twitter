@@ -24,7 +24,7 @@ function ListUpBlueskyPosts() {
 
     let text = postInfo.record.text;
     text = text.replace(
-      /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}|\s|$)/g,
+      /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}\b|\s|$)/g,
       ""
     ); // remove truncated links like "https://example.com/hogeh..."
     const urls = new Set();

@@ -12,9 +12,13 @@ function test() {
 }
 
 function test2() {
-  const cache = makeCache();
-  const result = cache.get("mySheet");
+  const text = "わかさぎセラピー【再現MMD】\nwww.nicovideo.jp/watch/sm3221...\n#sm32214338\n#ニコニコ動画";
+  const result = text.replace(
+      /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}\b|\s|$)/g,
+      ""
+    );
   Logger.log(result);
+
 }
 
 function toBoolean(booleanStr) {
