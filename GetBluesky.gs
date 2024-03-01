@@ -46,10 +46,13 @@ function ListUpBlueskyPosts() {
       replyParentId = feed.reply.parent.cid;
     }
     let isIncludeEmbed = false;
+    const imageUrls = [];
     if (postInfo.hasOwnProperty("embed")) {
       const embedInfo = postInfo.embed;
-      isIncludeEmbed = embedInfo.hasOwnProperty("images");
-      if (embedInfo.$type === "app.bsky.embed.external#view") {
+      if (embedInfo.$type === "app.bsky.embed.images#view") {
+        isIncludeEmbed = true;
+        postInfo.embed.images.map((imageInfo) => imageUrls.push(imageInfo.fullsize));
+      } else if (embedInfo.$type === "app.bsky.embed.external#view") {
         urls.add(embedInfo.external.uri);
       } else if (embedInfo.$type === "app.bsky.embed.record#view") {
         isQuoteRepost = embedInfo.record.value.$type === "app.bsky.feed.post";
@@ -57,14 +60,15 @@ function ListUpBlueskyPosts() {
         // if post includes both image and repost
         isQuoteRepost = true;
         isIncludeEmbed = true;
-      }
+        postInfo.embed.media.images.map((imageInfo) => imageUrls.push(imageInfo.fullsize));
+     }
     }
     const isRepost =
       postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
 
     if (urls) text += "\n" + Array.from(urls).join("\n");
 
-    const imageUrls = [];
+    /*
     if (isIncludeEmbed) {
       const aturi = postInfo.uri;
       const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
@@ -85,6 +89,7 @@ function ListUpBlueskyPosts() {
       }
       // Logger.log('imageUrl: %s', imageUrls);
     }
+    */
 
     const headers = sheetData[0];
     const postIdColumnIndex = headers.indexOf("BlueSky ID");

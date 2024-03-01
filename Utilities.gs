@@ -3,16 +3,27 @@ function test() {
   const response = getPosts(accessJwt, BLUESKY_IDENTIFIER);
   Logger.log(response.feed.length);
 
-  let sheetData = getMySheet();
-  sheetData.splice(0, 1);
-  const sheetIds = sheetData.map((elm) => elm[0]);
-
-  const postInfo = response.feed[98].post;
-
-  // responseForPhotoJSON.thread.post.author.handle
+  const postInfo = response.feed[2].post;
+  const aturi = postInfo.uri;
+  const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
+  const options = {
+    method: "get",
+    contentType: "application/json",
+    headers: {
+      Authorization: `Bearer ${accessJwt}`,
+    },
+    muteHttpExceptions: true,
+  };
+  const responseForPhoto = fetchUrl(posturi, options);
+  const responseForPhotoJSON = JSON.parse(
+    responseForPhoto.getContentText()
+  );
+  let result = responseForPhotoJSON.thread.post.embed.$type;
+  result = postInfo.embed.media.images[0].fullsize;
   const postIds = response.feed.map((elm) => elm.post.record.text); // postInfo.embed.images[0].fullsize;
 
-  Logger.log(postIds);
+  Logger.log(Object.keys(result));
+  Logger.log(result);
 }
 
 function test2() {
