@@ -164,8 +164,8 @@ function uploadImage(imageUrl) {
     );
   }
 
-  const imageBlob = fetchUrl(imageUrl, { method: "GET" }).getBlob();
-  const media = Utilities.base64Encode(imageBlob.getBytes());
+  const imageBinary = fetchUrl(imageUrl, { method: "GET" }).getBlob().getBytes();
+  const media = Utilities.base64Encode(imageBinary);
 
   const uploadPayload = {
     media_data: media,
@@ -178,8 +178,31 @@ function uploadImage(imageUrl) {
   return mediaId;
 }
 
+function uploadTwitterMedia(_payload, _options = {}) {
+  const service = getService1();
+  const url = "https://upload.twitter.com/1.1/media/upload.json";
+  const options = _options === {}
+    ? _options
+    : {
+        method: "POST",
+        payload: _payload,
+        muteHttpExceptions: true,
+      };
+
+  const uploadAttemptNum = 3;
+  const uploadResponse = fetchUrlNTimes(
+    url,
+    options,
+    uploadAttemptNum,
+    (url, options) => service.fetch(url, options)
+  );
+  return uploadResponse;
+}
+
 function uploadMovie(movieUrl) {
-  const movieData = fetchUrlNTimes(movieUrl, { method: "GET" }, 3);
+  const dataBinary = fetchUrlNTimes(movieUrl, { method: "GET" }, 3).getBlob().getBytes();
+  const movieData = Utilities.base64Encode(dataBinary);
+
   let mediaId = "";
   for (let i = 0; i < 3; i++) {
     mediaId = mediaUploadInit(movieData);
@@ -261,25 +284,4 @@ function mediaUploadFinalize(mediaId) {
     response = uploadTwitterMedia(payload);
   }
   return response;
-}
-
-function uploadTwitterMedia(_payload, _options = undefined) {
-  const service = getService1();
-  const url = "https://upload.twitter.com/1.1/media/upload.json";
-  const options = _options
-    ? _options
-    : {
-        method: "POST",
-        payload: _payload,
-        muteHttpExceptions: true,
-      };
-
-  const uploadAttemptNum = 3;
-  const uploadResponse = fetchUrlNTimes(
-    url,
-    options,
-    uploadAttemptNum,
-    service.fetch
-  );
-  return uploadResponse;
 }

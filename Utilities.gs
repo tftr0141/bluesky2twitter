@@ -12,12 +12,27 @@ function test() {
 }
 
 function test2() {
-  const text =
-    "わかさぎセラピー【再現MMD】\nwww.nicovideo.jp/watch/sm3221...\n#sm32214338\n#ニコニコ動画";
-  const result = text.replace(
-    /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}\b|\s|$)/g,
-    ""
-  );
+  const service = getService1();
+  const movieUrl = "https://cdn.bsky.app/img/feed_fullsize/plain/did:plc:nsaqh4fei7dagrxc4l2tyeum/bafkreieboxl3wpwt2qxr43g32wripzcwjvqleyrfkb6cbhsafsebmpj3ra@jpeg";
+  let imgUrl = movieUrl;
+
+  var imgBlob = UrlFetchApp.fetch(imgUrl).getBlob().getBytes();
+  var img_64  = Utilities.base64Encode(imgBlob);
+
+  var img_option = { 
+    'method' : "POST", 
+    payload: {
+      media_data: img_64,
+      // media: imgBlob,
+    },
+    muteHttpExceptions: true,
+  };
+  var endPointMedia  = "https://upload.twitter.com/1.1/media/upload.json";
+
+  const func = (a,b) => service.fetch(a,b);
+  // var image_upload = JSON.parse(func(endPointMedia, img_option));
+  // let result = image_upload['media_id_string'];
+  result = uploadImage(imgUrl);
   Logger.log(result);
 }
 
