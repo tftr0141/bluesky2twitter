@@ -7,7 +7,7 @@ function ListUpBlueskyPosts() {
   const columnNumber = sheetData[0].length;
   const postData = JSON.parse(JSON.stringify(sheetData));
   postData.splice(0, 1);
-  const postIdValues = postData.map((elm) => elm[0]);
+  const postIdValues = new Set(postData.map((elm) => elm[0]));
 
   const accessJwt = getAccessJwt(BLUESKY_IDENTIFIER, BLUESKY_PASSWORD);
   const responseJSON = getPosts(accessJwt, BLUESKY_IDENTIFIER);
@@ -16,7 +16,7 @@ function ListUpBlueskyPosts() {
     const postInfo = feed.post;
     const postId = postInfo.cid;
 
-    if (postIdValues.includes(postId)) {
+    if (postIdValues.has(postId)) {
       // if post id is already written in the sheet
       return;
     }
@@ -71,29 +71,6 @@ function ListUpBlueskyPosts() {
       postInfo.author.handle !== BLUESKY_IDENTIFIER || isQuoteRepost;
 
     if (urls) text += "\n" + Array.from(urls).join("\n");
-
-    /*
-    if (isIncludeEmbed) {
-      const aturi = postInfo.uri;
-      const posturi = `https://bsky.social/xrpc/app.bsky.feed.getPostThread?uri=${aturi}`;
-      const options = {
-        method: "get",
-        contentType: "application/json",
-        headers: {
-          Authorization: `Bearer ${accessJwt}`,
-        },
-        muteHttpExceptions: true,
-      };
-      const responseForPhoto = fetchUrl(posturi, options);
-      const responseForPhotoJSON = JSON.parse(
-        responseForPhoto.getContentText()
-      );
-      for (image of responseForPhotoJSON.thread.post.embed.images) {
-        imageUrls.push(image.fullsize);
-      }
-      // Logger.log('imageUrl: %s', imageUrls);
-    }
-    */
 
     const headers = sheetData[0];
     const postIdColumnIndex = headers.indexOf("BlueSky ID");

@@ -30,7 +30,7 @@ function SendPostsToTwitter() {
 
   postValues.forEach((post) => {
     const postId = post[postIdColumnIndex];
-    const author = post[parentAuthorHandleColumnIndex];
+    const parentAuthor = post[parentAuthorHandleColumnIndex];
     const text = post[textColumnIndex];
     const isRepost = toBoolean(post[isRepostColumnIndex]);
     const isReply = toBoolean(post[isReplyIdColumnIndex]);
@@ -44,7 +44,7 @@ function SendPostsToTwitter() {
     if (isReply) {
       const parentPostIndex = postIdValues.indexOf(parentId);
 
-      if (parentPostIndex == -1 || author !== BLUESKY_IDENTIFIER) {
+      if (parentPostIndex == -1 || parentAuthor !== BLUESKY_IDENTIFIER) {
         isIgnore = true;
       } else {
         replyParentTweetId = sheetData[parentPostIndex][tweetIdColumnIndex];
@@ -52,7 +52,8 @@ function SendPostsToTwitter() {
     }
 
     // 全てfalseだったら投稿対象
-    if ([isRepost, isIgnore, isTwitterPosted].includes(true)) return;
+    if (isTwitterPosted || isRepost || isIgnore) return;
+    isTweeted = true;
 
     // Logger.log('text: %s  \n  image: %s', text, isIncludeEmbed ? imageUrl : "no_image");
 
@@ -75,7 +76,6 @@ function SendPostsToTwitter() {
     tweetIds.push(tweetId);
     twitterPostedIds.push(postId);
 
-    isTweeted = true;
   });
 
   for (let i = 0; i < twitterPostedIds.length; i++) {
@@ -130,8 +130,8 @@ function postTweet(_payload) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "Open the following URL and re-run the script: %s",
-      authorizationUrl
+      "OAuth2 failed. Open the following URL and re-run the script: \n" 
+      + authorizationUrl
     );
   }
   const url = `https://api.twitter.com/2/tweets`;
@@ -159,8 +159,8 @@ function uploadImage(imageUrl) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "Open the following URL and re-run the script: %s",
-      authorizationUrl
+      "OAuth1 failed. Open the following URL and re-run the script: \n"
+      + authorizationUrl
     );
   }
 
