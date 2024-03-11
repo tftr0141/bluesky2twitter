@@ -185,12 +185,12 @@ function uploadTwitterMedia(_payload, _options = undefined) {
   const url = "https://upload.twitter.com/1.1/media/upload.json";
   const options =
     _options === undefined
-      ? _options
-      : {
+      ? {
           method: "POST",
           payload: _payload,
           muteHttpExceptions: true,
-        };
+        }
+      : _options;
 
   const uploadAttemptNum = 3;
   const uploadResponse = fetchUrlNTimes(

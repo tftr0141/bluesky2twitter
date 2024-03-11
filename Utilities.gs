@@ -38,7 +38,7 @@ function fetchUrl(_url, _options, func = UrlFetchApp.fetch) {
   return fetchUrlNTimes(_url, _options, 1, func);
 }
 
-function fetchUrlNTimes(url, options, n, func = UrlFetchApp.fetch) {
+function fetchUrlNTimes(url, options, n, func = (url, options) => UrlFetchApp.fetch(url, options)) {
   const tweetAttemptNum = n;
   let response = {};
   for (let i = 0; i < tweetAttemptNum; i++) {
