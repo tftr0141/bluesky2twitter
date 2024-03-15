@@ -54,9 +54,11 @@ function getMySheet(ranges = "", useCache = true) {
 
   const cache = makeCache();
   const sheetKey = "mySheet";
-  const mySheet = cache.get(sheetKey);
-  if (mySheet != null && useCache) return mySheet;
-
+  if (useCache) {
+    const mySheet = cache.get(sheetKey);
+    if (mySheet != null) return mySheet;
+  }
+ 
   let apiResponse = {};
   try {
     apiResponse = Sheets.Spreadsheets.Values.batchGet(sheetId, {
@@ -100,21 +102,21 @@ function updateMySheet(_values, _range) {
 }
 
 class mySheetRowsIndex {
-  constructor(sheetData) {
-  this.sheetData = JSON.parse(JSON.stringify(sheetData));
-  const headers = this.sheetData[0];
-  this.maxIndex = headers.length - 1;
+  constructor(_sheetData) {
+    const sheetData = JSON.parse(JSON.stringify(_sheetData));
+    const headers = sheetData[0];
+    this.maxIndex = headers.length - 1;
 
-  this.postId = headers.indexOf("BlueSkyId");
-  this.parentAuthorHandle = headers.indexOf("parentAuthorHandle");
-  this.tweetId = headers.indexOf("tweetId");
-  this.parentId = headers.indexOf("replyParentId");
-  this.text = headers.indexOf("text");
-  this.isReplyId = headers.indexOf("isReply");
-  this.isRepost = headers.indexOf("isRepost");
-  this.isIncludeEmbed = headers.indexOf("includeEmbed");
-  this.isIgnore = headers.indexOf("ignoreThis");
-  this.isTwitterPosted = headers.indexOf("alreadyTweeted");
-  this.imageUrl = headers.indexOf("imageUrl");
+    this.postId = headers.indexOf("BlueskyId");
+    this.parentAuthorHandle = headers.indexOf("parentAuthorHandle");
+    this.tweetId = headers.indexOf("tweetId");
+    this.parentId = headers.indexOf("replyParentId");
+    this.text = headers.indexOf("text");
+    this.isReplyId = headers.indexOf("isReply");
+    this.isRepost = headers.indexOf("isRepost");
+    this.isIncludeEmbed = headers.indexOf("includeEmbed");
+    this.isIgnore = headers.indexOf("ignoreThis");
+    this.isTwitterPosted = headers.indexOf("alreadyTweeted");
+    this.imageUrl = headers.indexOf("imageUrl");
   }
 }
