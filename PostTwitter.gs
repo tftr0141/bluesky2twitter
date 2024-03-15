@@ -4,23 +4,9 @@ function SendPostsToTwitter() {
   let isTweeted = false;
 
   const sheetData = getMySheet();
-
-  const headers = sheetData[0];
-  const postIdColumnIndex = headers.indexOf("BlueSky ID");
-  const parentAuthorHandleColumnIndex = headers.indexOf("parent author handle");
-  const tweetIdColumnIndex = headers.indexOf("tweet id");
-  const parentIdColumnIndex = headers.indexOf("reply parent id");
-
-  const textColumnIndex = headers.indexOf("text");
-  const isReplyIdColumnIndex = headers.indexOf("is reply");
-  const isRepostColumnIndex = headers.indexOf("isRepost");
-  const isIncludeEmbedColumnIndex = headers.indexOf("include embed");
-  const isIgnoreColumnIndex = headers.indexOf("ignore this");
-  const isTwitterPostedColumnIndex = headers.indexOf("already tweeted");
-  const imageUrlColumnIndex = headers.indexOf("image url");
+  const sheetRowsIndex = new mySheetRowsIndex(sheetData);
 
   const tweetIds = [];
-
   const postIdValues = sheetData.map((elm) => elm[0]);
 
   const postValues = JSON.parse(JSON.stringify(sheetData)); // deepcopy array
@@ -29,16 +15,16 @@ function SendPostsToTwitter() {
   const twitterPostedIds = [];
 
   postValues.forEach((post) => {
-    const postId = post[postIdColumnIndex];
-    const parentAuthor = post[parentAuthorHandleColumnIndex];
-    const text = post[textColumnIndex];
-    const isRepost = toBoolean(post[isRepostColumnIndex]);
-    const isReply = toBoolean(post[isReplyIdColumnIndex]);
-    const isIncludeEmbed = toBoolean(post[isIncludeEmbedColumnIndex]);
-    let isIgnore = toBoolean(post[isIgnoreColumnIndex]) || postId === "";
-    const isTwitterPosted = toBoolean(post[isTwitterPostedColumnIndex]);
-    const imageUrl = post[imageUrlColumnIndex];
-    const parentId = post[parentIdColumnIndex];
+    const postId = post[sheetRowsIndex.postId];
+    const parentAuthor = post[sheetRowsIndex.parentAuthorHandle];
+    const text = post[sheetRowsIndex.text];
+    const isRepost = toBoolean(post[sheetRowsIndex.isRepost]);
+    const isReply = toBoolean(post[sheetRowsIndex.isReplyId]);
+    const isIncludeEmbed = toBoolean(post[sheetRowsIndex.isIncludeEmbed]);
+    let isIgnore = toBoolean(post[sheetRowsIndex.isIgnore]) || postId === "";
+    const isTwitterPosted = toBoolean(post[sheetRowsIndex.isTwitterPosted]);
+    const imageUrl = post[sheetRowsIndex.imageUrl];
+    const parentId = post[sheetRowsIndex.parentId];
 
     let replyParentTweetId = "";
     if (isReply) {
@@ -47,12 +33,14 @@ function SendPostsToTwitter() {
       if (parentPostIndex == -1 || parentAuthor !== BLUESKY_IDENTIFIER) {
         isIgnore = true;
       } else {
-        replyParentTweetId = sheetData[parentPostIndex][tweetIdColumnIndex];
+        replyParentTweetId = sheetData[parentPostIndex][sheetRowsIndex.tweetId];
       }
     }
 
     // 全てfalseだったら投稿対象
-    if (isTwitterPosted || isRepost || isIgnore) return;
+    if (isTwitterPosted || isRepost || isIgnore) {
+      return;
+    }
     isTweeted = true;
 
     // Logger.log('text: %s  \n  image: %s', text, isIncludeEmbed ? imageUrl : "no_image");
@@ -75,7 +63,6 @@ function SendPostsToTwitter() {
 
     tweetIds.push(tweetId);
     twitterPostedIds.push(postId);
-
   });
 
   for (let i = 0; i < twitterPostedIds.length; i++) {
@@ -83,11 +70,11 @@ function SendPostsToTwitter() {
     const index = postIdValues.indexOf(postId);
     updateMySheet(
       [[true]],
-      `${alphabets[isTwitterPostedColumnIndex]}${index + 1}`
+      `${alphabets[sheetRowsIndex.isTwitterPosted]}${index + 1}`
     ); // 投稿した行のisTwitterPostedをtrueにする
     updateMySheet(
       [[tweetIds[i]]],
-      `${alphabets[tweetIdColumnIndex]}${index + 1}`
+      `${alphabets[sheetRowsIndex.tweetId]}${index + 1}`
     );
   }
   updateCache();
@@ -130,8 +117,8 @@ function postTweet(_payload) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "OAuth2 failed. Open the following URL and re-run the script: \n" 
-      + authorizationUrl
+      "OAuth2 failed. Open the following URL and re-run the script: \n" +
+        authorizationUrl
     );
   }
   const url = `https://api.twitter.com/2/tweets`;
@@ -159,8 +146,8 @@ function uploadImage(imageUrl) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "OAuth1 failed. Open the following URL and re-run the script: \n"
-      + authorizationUrl
+      "OAuth1 failed. Open the following URL and re-run the script: \n" +
+        authorizationUrl
     );
   }
 
