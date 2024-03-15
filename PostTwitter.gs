@@ -5,7 +5,7 @@ function SendPostsToTwitter() {
 
   const sheetData = getMySheet();
   const sheetRowsIndex = new mySheetRowsIndex(sheetData);
-  
+
   const tweetIds = [];
   const postIdValues = sheetData.map((elm) => elm[0]);
 
@@ -63,7 +63,6 @@ function SendPostsToTwitter() {
 
     tweetIds.push(tweetId);
     twitterPostedIds.push(postId);
-
   });
 
   for (let i = 0; i < twitterPostedIds.length; i++) {
@@ -118,8 +117,8 @@ function postTweet(_payload) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "OAuth2 failed. Open the following URL and re-run the script: \n" 
-      + authorizationUrl
+      "OAuth2 failed. Open the following URL and re-run the script: \n" +
+        authorizationUrl
     );
   }
   const url = `https://api.twitter.com/2/tweets`;
@@ -147,8 +146,8 @@ function uploadImage(imageUrl) {
   if (!service.hasAccess()) {
     const authorizationUrl = service.getAuthorizationUrl();
     throw new Error(
-      "OAuth1 failed. Open the following URL and re-run the script: \n"
-      + authorizationUrl
+      "OAuth1 failed. Open the following URL and re-run the script: \n" +
+        authorizationUrl
     );
   }
 

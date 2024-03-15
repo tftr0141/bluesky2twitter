@@ -58,7 +58,7 @@ function getMySheet(ranges = "", useCache = true) {
     const mySheet = cache.get(sheetKey);
     if (mySheet != null) return mySheet;
   }
- 
+
   let apiResponse = {};
   try {
     apiResponse = Sheets.Spreadsheets.Values.batchGet(sheetId, {

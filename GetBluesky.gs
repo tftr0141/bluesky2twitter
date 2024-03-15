@@ -96,7 +96,7 @@ function ListUpBlueskyPosts() {
   } else {
     Logger.log("No new post.");
   }
-  return  newTweetExsists;
+  return newTweetExsists;
 }
 
 function getPosts(accessJwt, identifier, number = MAX_DATA_NUM) {
