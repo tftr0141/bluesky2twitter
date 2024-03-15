@@ -72,41 +72,31 @@ function ListUpBlueskyPosts() {
 
     if (urls) text += "\n" + Array.from(urls).join("\n");
 
-    const headers = sheetData[0];
-    const postIdColumnIndex = headers.indexOf("BlueSky ID");
-    const parentAuthorHandleColumnIndex = headers.indexOf(
-      "parent author handle"
-    );
-    const tweetIdColumnIndex = headers.indexOf("tweet id");
-    const parentIdColumnIndex = headers.indexOf("reply parent id");
-
-    const textColumnIndex = headers.indexOf("text");
-    const isReplyIdColumnIndex = headers.indexOf("is reply");
-    const isRepostColumnIndex = headers.indexOf("isRepost");
-    const isIncludeEmbedColumnIndex = headers.indexOf("include embed");
-    const isIgnoreColumnIndex = headers.indexOf("ignore this");
-    const isTwitterPostedColumnIndex = headers.indexOf("already tweeted");
-    const imageUrlColumnIndex = headers.indexOf("image url");
-
+    const sheetRowsIndex = new mySheetRowsIndex(sheetData);
     let newRow = new Array(columnNumber);
-    newRow[postIdColumnIndex] = postId;
-    newRow[parentAuthorHandleColumnIndex] = replyParentAuthor;
-    newRow[tweetIdColumnIndex] = "";
-    newRow[parentIdColumnIndex] = replyParentId;
-    newRow[textColumnIndex] = text;
-    newRow[isRepostColumnIndex] = isRepost;
-    newRow[isReplyIdColumnIndex] = isReply;
-    newRow[isIncludeEmbedColumnIndex] = isIncludeEmbed;
-    newRow[isIgnoreColumnIndex] = false;
-    newRow[isTwitterPostedColumnIndex] = false;
-    newRow[imageUrlColumnIndex] = imageUrls.join(",");
+    newRow[sheetRowsIndex.postId] = postId;
+    newRow[sheetRowsIndex.parentAuthorHandle] = replyParentAuthor;
+    newRow[sheetRowsIndex.tweetId] = "";
+    newRow[sheetRowsIndex.parentId] = replyParentId;
+    newRow[sheetRowsIndex.text] = text;
+    newRow[sheetRowsIndex.isRepost] = isRepost;
+    newRow[sheetRowsIndex.isReplyId] = isReply;
+    newRow[sheetRowsIndex.isIncludeEmbed] = isIncludeEmbed;
+    newRow[sheetRowsIndex.isIgnore] = false;
+    newRow[sheetRowsIndex.isTwitterPosted] = false;
+    newRow[sheetRowsIndex.imageUrl] = imageUrls.join(",");
 
     Logger.log("row added to sheet: \n %s", newRow);
     addDataRow(newRow);
     updateCache();
   });
 
-  return newTweetExsists;
+  if (newTweetExsists) {
+    Logger.log("New tweet exists.");
+  } else {
+    Logger.log("No new post.");
+  }
+  return  newTweetExsists;
 }
 
 function getPosts(accessJwt, identifier, number = MAX_DATA_NUM) {

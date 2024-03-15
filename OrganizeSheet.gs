@@ -99,15 +99,22 @@ function updateMySheet(_values, _range) {
   return result;
 }
 
-function sheetTest() {
-  //Logger.log('my sheet: %s \n data: %s', getMySheet(), sheetData[5]);
-  let newRow = [
-    "bafyreichkne745mkabo74avg3it3jf3voc4wtfzn3tln6knwmpx2c2qezq",
-    "test text",
-    "FALSE",
-    "FALSE",
-    "FALSE",
-    "TRUE",
-  ];
-  addDataRow(newRow);
+class mySheetRowsIndex {
+  constructor(sheetData) {
+  this.sheetData = JSON.parse(JSON.stringify(sheetData));
+  const headers = this.sheetData[0];
+  this.maxIndex = headers.length - 1;
+
+  this.postId = headers.indexOf("BlueSkyId");
+  this.parentAuthorHandle = headers.indexOf("parentAuthorHandle");
+  this.tweetId = headers.indexOf("tweetId");
+  this.parentId = headers.indexOf("replyParentId");
+  this.text = headers.indexOf("text");
+  this.isReplyId = headers.indexOf("isReply");
+  this.isRepost = headers.indexOf("isRepost");
+  this.isIncludeEmbed = headers.indexOf("includeEmbed");
+  this.isIgnore = headers.indexOf("ignoreThis");
+  this.isTwitterPosted = headers.indexOf("alreadyTweeted");
+  this.imageUrl = headers.indexOf("imageUrl");
+  }
 }
