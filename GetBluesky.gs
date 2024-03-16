@@ -24,9 +24,11 @@ function ListUpBlueskyPosts() {
 
     let text = postInfo.record.text;
     text = text.replace(
-      /\b(?:https?:\/\/|www\.|ftp:\/\/)\S+?(\.{3}\b|\s|$)/g,
+      /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)\.{3}/g,
       ""
-    ); // remove truncated links like "https://example.com/hogeh..."
+    ); 
+    // remove truncated links like "https://example.com/hogeh..."
+    // reference: https://regexr.com/
     const urls = new Set();
     if (postInfo.record.hasOwnProperty("facets")) {
       const urls_in_text = postInfo["record"]["facets"].flatMap((facet) =>
@@ -92,7 +94,7 @@ function ListUpBlueskyPosts() {
   });
 
   if (newTweetExsists) {
-    Logger.log("New tweet exists.");
+    Logger.log("New post exists.");
   } else {
     Logger.log("No new post.");
   }
